@@ -47,6 +47,12 @@ func LoadELF(fname string, inFlash InFlashFunc) (*Image, error) {
 
 		for _, sec := range f.Sections {
 			if sec.Size > 0 && inProg(sec.Addr, sec.Size, prog) {
+				
+				// skip .app_hdr and .boot3 as they are part of the bootloader.
+				if(sec.Name == ".app_hdr" || sec.Name == ".boot3") {
+					continue
+				}
+				
 				progOffset := sec.Addr - prog.Vaddr
 				data, err := sec.Data()
 				if err != nil {
